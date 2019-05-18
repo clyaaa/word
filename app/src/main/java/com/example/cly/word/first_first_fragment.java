@@ -29,100 +29,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-public class WordNameFragment extends Fragment {
-    WordsDBHelper mDBHelper;
+public class first_first_fragment extends Fragment {
+    GeneralDBHelper mDBHelper;
     WordAdapter adapter;
-    boolean shunxu=true;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate( R.layout.fragment_word_title, container, false );
+        super.onCreate(savedInstanceState);
+        View view = inflater.inflate( R.layout.first_first_fragment, container, false );
         RecyclerView wordTitleRecyclerView = (RecyclerView)view.findViewById( R.id.word_title_recycler_view );
         LinearLayoutManager layoutManager=new LinearLayoutManager(getActivity());
         wordTitleRecyclerView.setLayoutManager(layoutManager);
-        adapter=new WordAdapter(getWord(shunxu));
+        adapter=new WordAdapter(getNews(),1);
         wordTitleRecyclerView.setAdapter(adapter);
         setHasOptionsMenu(true);
         registerForContextMenu( wordTitleRecyclerView );//注册上下文菜单
-        mDBHelper=new WordsDBHelper( getContext() );
+        mDBHelper=new GeneralDBHelper( getContext() );
         return view;
     }
 
-    class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder>{
-        private List<Word> mWordList;
-        private int mPosition = -1;
-
-        public int getPosition() {
-            return mPosition;
-        }
-        public WordAdapter(List<Word> mWordList){
-            this.mWordList=mWordList;
-        }
-        public void removeItem(int position) {
-            mWordList.remove(position);
-            notifyDataSetChanged();
-        }
-        public Word getItem(int position){
-            return mWordList.get( position );
-        }
-        class ViewHolder extends RecyclerView.ViewHolder{
-            TextView wordNameText;
-            TextView wordMeaningText;
-            TextView wordUpdateText;
-            TextView wordcollect;
-            public ViewHolder(View view){
-                super(view);
-                wordNameText=(TextView)view.findViewById( R.id.word_name );
-                wordMeaningText=(TextView)view.findViewById( R.id.word_meaning );
-                wordUpdateText=(TextView)view.findViewById( R.id.word_update );
-                wordcollect=(TextView)view.findViewById(R.id.wordcollect);
-            }
-        }
-        public void update(List<Word> mWordList){
-            this.mWordList=mWordList;
-            notifyDataSetChanged();
-        }
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-            View view=LayoutInflater.from( parent.getContext() ).inflate( R.layout.word_item,parent,false );
-            final ViewHolder holder=new ViewHolder( view );
-            view.setOnClickListener( new View.OnClickListener(){
-                public void onClick(View v){
-                    Word word=mWordList.get( holder.getAdapterPosition() );
-                    WordContentActivity.actionStart( getActivity(),word.getName(),word.getMeaning(),word.getSample(),word.getUpdate() );
-                }
-            } );
-            return holder;
-
-        }
-
-        @Override
-        /*public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            Word word=mWordList.get(position);
-            holder.wordNameText.setText(word.getName());
-            holder.wordMeaningText.setText( word.getMeaning() );
-
-        }*/
-        public void onBindViewHolder(final WordAdapter.ViewHolder holder, final int position) {
-            Word word=mWordList.get(position);
-            holder.wordNameText.setText(word.getName());
-            holder.wordMeaningText.setText( word.getMeaning() );
-            holder.wordUpdateText.setText(word.getUpdate());
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    mPosition =holder.getAdapterPosition();
-                    return false;
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mWordList.size();
-        }
-
-    }
-    private List<Word> getWord(boolean shunxu){//true是按时间排序，false是按首字母
+    private List<News> getNews(){
         /*List<Word> wordList=new ArrayList <>(  );
         WordsDBHelper dbHelper;
         SQLiteDatabase db=dbHelper.getWritableDatabase();
@@ -134,36 +60,26 @@ public class WordNameFragment extends Fragment {
             wordList.add(word);
         }
         return wordList;*/
-        List<Word> wordList=new ArrayList <>(  );
-        WordsDBHelper dbHelpermDBHelper=new WordsDBHelper( getContext() );
+        List<News> newsList=new ArrayList <>(  );
+        GeneralDBHelper dbHelpermDBHelper=new GeneralDBHelper( getContext() );
         SQLiteDatabase db=dbHelpermDBHelper.getWritableDatabase();
         Cursor c;
-        if(shunxu){
-             c=db.query( Words.Word.TABLE_NAME,null,"collect = 'no'",null,null,null,"updatetime" );
-        }else{
-             c=db.query( Words.Word.TABLE_NAME,null,"collect = 'no'",null,null,null,"name" );
-        }
-        //Cursor cursor = db.query("person", new String[]{"personid,name,age"}, "name like?", new String[]{"%传智%"}, null, null, "personid desc", "1,2");
-        //query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit)
+        c=db.query( DataBase.TABLE_NAME1,null,"news_type='1'",null,null,null,null );
         if(c.moveToFirst()){
             do{
-                int id=c.getInt( c.getColumnIndex( "id" ) );
-                String name=c.getString( c.getColumnIndex( "name") );
-                String meaning=c.getString( c.getColumnIndex( "meaning" ) );
-                String sample=c.getString( c.getColumnIndex( "sample" ) );
-                String updatetime=c.getString( c.getColumnIndex( "updatetime" ) );
-                String collect=c.getString(c.getColumnIndex("collect"));
-                Word word=new Word();
-                word.setId( id );
-                word.setName( name );
-                word.setMeaning( meaning );
-                word.setSample( sample );
-                word.setUpdate( updatetime );
-                word.setCollect(collect);
-                wordList.add( word );
+                int news_id=c.getInt( c.getColumnIndex( "news_id" ) );
+                String news_title=c.getString( c.getColumnIndex( "news_title") );
+                String news_content=c.getString( c.getColumnIndex( "news_content" ) );
+                String news_time=c.getString( c.getColumnIndex( "news_time" ) );
+                News news=new News();
+                news.setNews_id( news_id );
+                news.setNews_title( news_title );
+                news.setNews_content( news_content );
+                news.setNews_time( news_time );
+                newsList.add( news );
             }while(c.moveToNext());
         }
-        return wordList;
+        return newsList;
     }
     private String getRandomLengthContent(String content){
         Random random=new Random();
@@ -187,18 +103,10 @@ public class WordNameFragment extends Fragment {
         int id=item.getItemId();
         switch(id){
             case R.id.action_search:
-                SearchDialog();
+                //SearchDialog();
                 return true;
             case R.id.action_insert:
                 InsertDialog();
-                return true;
-            case R.id.shunxu:
-                shunxu=!shunxu;
-                adapter.update(getWord(shunxu));//不能直接动构造方法
-                return true;
-            case R.id.collect:
-                Intent intent=new Intent(getContext(),collectActivity.class);
-                startActivity(intent);
                 return true;
         }
         return super.onOptionsItemSelected( item );
@@ -213,6 +121,7 @@ public class WordNameFragment extends Fragment {
         super.onCreateContextMenu(menu, v, menuInfo);
     }
     public boolean onContextItemSelected(MenuItem item){
+
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         TextView textId=null;
         TextView textWord=null;
@@ -220,55 +129,21 @@ public class WordNameFragment extends Fragment {
         TextView textSample=null;
         //AdapterView.AdapterContextMenuInfo info=null;
         View itemView=null;
-        Word word;
+        News news;
         int id;
         switch(item.getItemId()){
             //case 1:
             case R.id.action_delete:
                 //info=(AdapterView.AdapterContextMenuInfo)item.getMenuInfo();    课件上的东西没什么卵用
                 //adapter.removeItem(adapter.getPosition());
-                word=adapter.getItem(adapter.getPosition());
-                id =word.getId();
+                int r=adapter.getPosition();
+                news=adapter.getItem(adapter.getPosition());
+                id =news.getNews_id();
                 DeleteDialog(id);
                 break;
-                /*itemView=info.targetView;
-                //textId=(TextView)itemView.findViewById(R.id.textId);
-                textWord =(TextView)itemView.findViewById(R.id.word_name);
-                if(textWord!=null){
-                    String strWord=textWord.getText().toString();
-                    DeleteDialog(strWord);
-                }
-                break;*/
-            //case 2:
-            case R.id.action_update:
-                //Toast.makeText(getContext(),"更新",Toast.LENGTH_LONG).show();
-                /*info=(AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-                itemView=info.targetView;
-                //textId=(TextView)itemView.findViewById( R.id.textId );
-                textWord =(TextView)itemView.findViewById(R.id.word_name);
-                textMeaning =(TextView)itemView.findViewById(R.id.word_meaning);
-                //textSample =(TextView)itemView.findViewById(R.id.textViewSample);
-                if(textWord!=null && textMeaning!=null ){
-                    //String strId=textId.getText().toString();
-                    String strWord=textWord.getText().toString();
-                    String strMeaning=textMeaning.getText().toString();
-                    //String strSample=textSample.getText().toString();
-                    UpdateDialog( strWord, strMeaning);
-                }
-                break;*/
-                word=adapter.getItem(adapter.getPosition());
-                id=word.getId();
-                String name =word.getName();
-                String meaning=word.getMeaning();
-                String sample=word.getSample();
-                UpdateDialog(id,name,meaning,sample);
-                break;
             case R.id.action_collect:
-                word=adapter.getItem(adapter.getPosition());
-                id=word.getId();
-                changecollect(id,"yes");
-                Intent intent=new Intent(getContext(),MainActivity.class);
-                startActivity(intent);
+                news=adapter.getItem(adapter.getPosition());
+                changecollect(news.getNews_id(),true);
                 break;
         }
         return true;
@@ -278,48 +153,48 @@ public class WordNameFragment extends Fragment {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         db.execSQL(sql,new String[]{strWord,strMeaning,strSample});
     }*/
-    private void Insert(String strWord, String strMeaning, String strSample) {
+    private void Insert(String strtitle, String strcontent,String strtype) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");// HH:mm:ss
 //获取当前时间
         Date date = new Date(System.currentTimeMillis());
 
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         //String sql="select MAX(?) id from wordDB";
-        String sqls="select id from wordDB ";
+        String sqls="select news_id from News_DB ";
         //Cursor c=db.rawQuery( sql ,new String[]{"id"});
         Cursor c=db.rawQuery(sqls,null);
         ContentValues values = new ContentValues();
         int maxid=-1;
         if(c.moveToFirst()){
             do{
-                int id=c.getInt( c.getColumnIndex( "id" ) );
+                int id=c.getInt( c.getColumnIndex( "news_id" ) );
                 if(id>maxid){
                     maxid=id;
                 }
             }while(c.moveToNext());
         }
         maxid+=1;
-        values.put("id",maxid);
-        values.put( "name", strWord );
-        values.put( "meaning", strMeaning );
-        values.put( "sample", strSample );
+        values.put("news_id",maxid);
+        values.put( "news_title", strtitle );
+        values.put( "news_content", strcontent );
+        values.put( "news_time", simpleDateFormat.format(date) );
         values.put("collect","no");
-        values.put( "updatetime",simpleDateFormat.format(date) );
+        values.put( "news_type",strtype );
         long newRowId;
-        newRowId = db.insert(Words.Word.TABLE_NAME,null,values);
+        newRowId = db.insert(DataBase.TABLE_NAME1,null,values);
     }
     private void InsertDialog(){
         final TableLayout tableLayout=(TableLayout)getLayoutInflater().inflate(R.layout.insert,null);
         new AlertDialog.Builder(getContext())
-                .setTitle( "新增单词" )
+                .setTitle( "新增文章" )
                 .setView(tableLayout)
                 .setPositiveButton( "确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String strWord=((EditText)tableLayout.findViewById( R.id.editWord )).getText().toString();
-                        String strMeaning=((EditText)tableLayout.findViewById(R.id.editMeaning)).getText().toString();
-                        String strSample=((EditText)tableLayout.findViewById(R.id.editSample)).getText().toString();
-                        Insert(strWord,strMeaning,strSample);
+                        String strTitle=((EditText)tableLayout.findViewById( R.id.edittitle )).getText().toString();
+                        String strContent=((EditText)tableLayout.findViewById(R.id.editcontent)).getText().toString();
+                        String strtype=((EditText)tableLayout.findViewById(R.id.edittype)).getText().toString();
+                        Insert(strTitle,strContent,strtype);
                         Intent intent=new Intent(getContext(),MainActivity.class);
                         startActivity(intent);
                     }
@@ -334,7 +209,7 @@ public class WordNameFragment extends Fragment {
                 .show();
     }
     private void DeleteUseSql(int strid){
-        String sql="delete from wordDB where id= '"+strid+"'";
+        String sql="delete from "+DataBase.TABLE_NAME1+" where news_id= '"+strid+"'";
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         db.execSQL(sql);
     }
@@ -346,8 +221,8 @@ public class WordNameFragment extends Fragment {
     }*/
     private void DeleteDialog(final int strid){
         new AlertDialog.Builder(getContext())
-                .setTitle("删除单词")
-                .setMessage("是否真的删除单词？")
+                .setTitle("删除文章")
+                .setMessage("是否真的删除文章？")
                 .setPositiveButton("确定",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {            //既可以使用Sql语句删除，也可以使用使用delete方法删除
@@ -369,15 +244,32 @@ public class WordNameFragment extends Fragment {
     }
     private void changecollect(int id,String collect){
         SQLiteDatabase db=mDBHelper.getReadableDatabase();
-        String sql="update wordDB set collect=? where id=?";
+        String sql="update "+DataBase.TABLE_NAME1+" set collect=? where news_id=?";
         String t=id+"";
         db.execSQL( sql,new String[]{collect,t} );
+    }
+    private void changecollect(int id,boolean collect){
+        String path = "http://192.168.43.93:8080/Web/Test2";
+        HttpUtil.changecollect(id,collect,path,new HttpCallbackListener(){
+            @Override
+            public void onFinish(String response) {//成功时的处理方法
+
+            }
+            @Override
+            public void onError(Exception e){//失败时的处理方法
+
+            }
+        });
     }
     private void UpdateUseSql(int id,String strWord,String strMeaning,String strNewSample){
         SQLiteDatabase db=mDBHelper.getReadableDatabase();
         String sql="update wordDB set name = ?,meaning=?,sample=? where id=?";
         String t=id+"";
         db.execSQL( sql,new String[]{strWord,strMeaning,strNewSample,t} );
+    }
+    public interface  HttpCallbackListener{
+        void onFinish(String response);
+        void onError(Exception e);
     }
     /*private void Update(String strId,String strWord,String strMeaning,String strSample){
         SQLiteDatabase db=mDBHelper.getReadableDatabase();
@@ -389,6 +281,8 @@ public class WordNameFragment extends Fragment {
         String[] selectionArgs = {strId};
         int count = db.update(Words.Word.TABLE_NAME,values,selection,selectionArgs);
     }*/
+
+    /*
     private void UpdateDialog(final int id, final String strName, final String strMeaning,final String strSample) {
         final TableLayout tableLayout = (TableLayout) getLayoutInflater().inflate(R.layout.insert, null);
         ((EditText)tableLayout.findViewById(R.id.editWord)).setText(strName);
@@ -415,18 +309,22 @@ public class WordNameFragment extends Fragment {
                 .create()//创建对话框
                 .show();//显示对话框
     }
-    private List<Word> SearchUseSql(String strWordSearch) {
+    */
+
+
+    /*
+    private List<News> SearchUseSql(String strWordSearch) {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         String sql="select * from wordDB where name = ? ";
         Cursor c=db.rawQuery(sql,new String[]{strWordSearch});
-        List<Word> list=new ArrayList<>(  );
+        List<News> list=new ArrayList<>(  );
         if(c.moveToFirst()){
             do{
                 int id=c.getInt( c.getColumnIndex( "id") );
                 String name=c.getString( c.getColumnIndex( "name" ) );
                 String meaning=c.getString( c.getColumnIndex( "meaning" ) );
                 String sample=c.getString( c.getColumnIndex( "sample" ) );
-                Word word=new Word();
+                News news=new News();
                 word.setId( id );
                 word.setName( name );
                 word.setMeaning( meaning );
@@ -435,7 +333,8 @@ public class WordNameFragment extends Fragment {
             }while(c.moveToNext());
         }
         return list;
-    }
+    }*/
+
     /*private List<Word> Search(String strWordSearch) {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         String[] projection = {"id", Words.Word.COLUMN_NAME_WORD, Words.Word.COLUMN_NAME_MEANING, Words.Word.COLUMN_NAME_SAMPLE};
@@ -460,7 +359,7 @@ public class WordNameFragment extends Fragment {
         }
         return list;
     }*/
-    private void SearchDialog() {
+    /*private void SearchDialog() {
         final TableLayout tableLayout = (TableLayout) getLayoutInflater().inflate(R.layout.searchterm, null);
         new AlertDialog.Builder(getContext())
                 .setTitle("查找单词")//标题
@@ -469,11 +368,11 @@ public class WordNameFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String txtSearchWord=((EditText)tableLayout.findViewById(R.id.editsearch)).getText().toString();
-                        List<Word> items=null;                    //既可以使用Sql语句查询，也可以使用方法查询
+                        List<News> items=null;                    //既可以使用Sql语句查询，也可以使用方法查询
                         items=SearchUseSql(txtSearchWord);
                         //items=Search(txtSearchWord);
                         if(items!=null) {
-                            Word item=items.get( 0);
+                            News item=items.get( 0);
                             Bundle bundle=new Bundle();
                             bundle.putSerializable("result", item );
                             Intent intent=new Intent(getContext(),SearchActivity.class);
@@ -490,5 +389,5 @@ public class WordNameFragment extends Fragment {
                     }            })
                 .create()//创建对话框
                 .show();//显示对话框
-    }
+    }*/
 }

@@ -5,34 +5,34 @@
     android:layout_height="wrap_content">
     <TableRow>
         <TextView
-            android:id="@+id/textWord"
+            android:id="@+id/texttitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="单词"/>
+            android:text="标题"/>
         <EditText
-            android:id="@+id/editWord"
+            android:id="@+id/edittitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </TableRow>
     <TableRow>
         <TextView
-            android:id="@+id/textMeaning"
+            android:id="@+id/textcontent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="词性"/>
+            android:text="内容"/>
         <EditText
-            android:id="@+id/editMeaning"
+            android:id="@+id/editcontent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </TableRow>
     <TableRow>
         <TextView
-            android:id="@+id/textSample"
+            android:id="@+id/texttype"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="注释"/>
+            android:text="类型"/>
         <EditText
-            android:id="@+id/editSample"
+            android:id="@+id/edittype"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </TableRow>

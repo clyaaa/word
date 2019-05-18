@@ -4,20 +4,22 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class WordsDBHelper extends SQLiteOpenHelper {
-    private final static String DATABASE_NAME="wordsdb";
+public class GeneralDBHelper extends SQLiteOpenHelper {
+    private final static String DATABASE_NAME="generous_db";
     private final static int DATABASE_VERSION=1;
     private final static String SQL_CREATE_DATABASE="CREATE TABLE "+
-            Words.Word.TABLE_NAME+"("+
-            "id INTEGER," +
-            "name TEXT,"+
-            "meaning TEXT,"+
-            "sample TEXT,"+
-            "collect TEXT,"+
-            "updatetime date"+")";
-    private final static String SQL_DELETE_DATABASE="DROP TABLE IF EXISTS "+Words.Word.TABLE_NAME;
+            DataBase.TABLE_NAME1+"("+
+            "news_id INTEGER," +
+            "news_title TEXT,"+
+            "news_content TEXT,"+
+            "news_time date,"+
+            "news_address TEXT,"+
+            "news_img TEXT,"+
+            "news_type INTEGER,"+
+            "collect TEXT"+")";
+    private final static String SQL_DELETE_DATABASE="DROP TABLE IF EXISTS "+DataBase.TABLE_NAME1;
 
-    public WordsDBHelper(Context context){
+    public GeneralDBHelper(Context context){
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
     }
     public void onCreate(SQLiteDatabase sqlLiteDatabase){

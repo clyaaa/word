@@ -3,9 +3,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <fragment
-        android:id="@+id/word_content_fragment"
-        android:name="com.example.cly.word.WordContentFragment"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/word_title_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        />
 </LinearLayout>
